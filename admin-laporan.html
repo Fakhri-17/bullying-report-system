@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Dashboard Laporan Bullying</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366F1;
+            --primary-dark: #4F46E5;
+            --secondary: #1E293B;
+            --accent: #F59E0B;
+            --background: #F8FAFC;
+            --text: #334155;
+            --text-light: #64748B;
+            --white: #FFFFFF;
+            --error: #EF4444;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--secondary) 0%, #0F172A 100%);
+            padding: 1.25rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .logo-text {
+            font-size: 1.125rem;
+            font-weight: 700;
+        }
+
+        .logo-text span {
+            color: var(--accent);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-refresh {
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-refresh:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .btn-refresh svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .total-badge {
+            background: var(--accent);
+            color: var(--secondary);
+            padding: 0.375rem 0.875rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        main {
+            padding: 6rem 2rem 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 1.75rem;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: var(--text-light);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.total {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .stat-icon.pending {
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .stat-icon.processed {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .stat-info h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .stat-info p {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        /* Reports Table */
+        .reports-container {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #E2E8F0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .table-header h2 {
+            font-size: 1.125rem;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--background);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #E2E8F0;
+        }
+
+        .search-box svg {
+            width: 18px;
+            height: 18px;
+            color: var(--text-light);
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.875rem;
+            color: var(--text);
+            outline: none;
+            width: 200px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #F8FAFC;
+        }
+
+        th {
+            padding: 1rem 1.25rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-light);
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        td {
+            padding: 1rem 1.25rem;
+            font-size: 0.875rem;
+            border-bottom: 1px solid #F1F5F9;
+            vertical-align: top;
+        }
+
+        tbody tr:hover {
+            background: #F8FAFC;
+        }
+
+        .kasus-cell {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .nama-cell {
+            font-weight: 500;
+        }
+
+        .pelaku-cell {
+            color: var(--error);
+        }
+
+        .korban-cell {
+            color: var(--info);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.baru {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .status-badge.dibaca {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        .status-badge.selesai {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .date-cell {
+            color: var(--text-light);
+            font-size: 0.8125rem;
+        }
+
+        .action-btn {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 0.375rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .action-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: #F1F5F9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+        }
+
+        .empty-state h3 {
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: var(--text-light);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #E2E8F0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h2 {
+            font-size: 1.25rem;
+            color: var(--secondary);
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--text-light);
+            padding: 0.25rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: #F1F5F9;
+            color: var(--text);
+        }
+
+        .modal-close svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .detail-row {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 0.5rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #F1F5F9;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .detail-value {
+            color: var(--text);
+            font-size: 0.875rem;
+        }
+
+        .detail-value.kasus {
+            white-space: pre-wrap;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #E2E8F0;
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+
+        .btn-modal {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-modal.secondary {
+            background: #F1F5F9;
+            border: none;
+            color: var(--text);
+        }
+
+        .btn-modal.secondary:hover {
+            background: #E2E8F0;
+        }
+
+        .btn-modal.primary {
+            background: var(--primary);
+            border: none;
+            color: var(--white);
+        }
+
+        .btn-modal.primary:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Resolve Feature */
+        .resolve-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #E2E8F0;
+        }
+
+        .resolve-label {
+            font-weight: 500;
+            color: var(--secondary);
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .resolve-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 0.875rem;
+            border: 2px solid #E2E8F0;
+            border-radius: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.875rem;
+            resize: vertical;
+            transition: border-color 0.2s ease;
+        }
+
+        .resolve-textarea:focus {
+            outline: none;
+            border-color: var(--success);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .resolve-textarea::placeholder {
+            color: #94A3B8;
+        }
+
+        .btn-resolve {
+            background: var(--success);
+            border: none;
+            color: var(--white);
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-left: 0.5rem;
+        }
+
+        .btn-resolve:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .btn-resolve:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .penyelesaian-preview {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            font-size: 0.875rem;
+            color: var(--success);
+        }
+
+        .penyelesaian-preview h4 {
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+            font-size: 0.9375rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            main {
+                padding: 5rem 1rem 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .search-box input {
+                width: 100%;
+            }
+
+            th, td {
+                padding: 0.75rem;
+                font-size: 0.8125rem;
+            }
+
+            .detail-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <a href="#" class="logo">
+                <div class="logo-icon">📊</div>
+                <div class="logo-text">Admin<span>Panel</span></div>
+            </a>
+            <div class="header-actions">
+                <div class="total-badge" id="totalBadge">0 Laporan</div>
+                <button class="btn-refresh" onclick="loadReports()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Refresh
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="page-header">
+            <h1>📋 Dashboard Laporan Bullying</h1>
+            <p>Kelola dan tindak lanjuti laporan bullying yang masuk</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon total">📋</div>
+                <div class="stat-info">
+                    <h3 id="totalCount">0</h3>
+                    <p>Total Laporan</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon pending">⏳</div>
+                <div class="stat-info">
+                    <h3 id="pendingCount">0</h3>
+                    <p>Belum Ditangani</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon processed">✅</div>
+                <div class="stat-info">
+                    <h3 id="processedCount">0</h3>
+                    <p>Selesai</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Table -->
+        <div class="reports-container">
+            <div class="table-header">
+                <h2>📝 Daftar Laporan</h2>
+                <div class="search-box">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Cari laporan..." oninput="filterReports()">
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Tanggal</th>
+                            <th>Kasus</th>
+                            <th>Pelaku</th>
+                            <th>Korban</th>
+                            <th>Kelas</th>
+                            <th>Status</th>
+                        <th>Penanganan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportsTableBody">
+                        <!-- Data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon">📭</div>
+                <h3>Belum Ada Laporan</h3>
+                <p>Laporan bullying akan muncul di sini</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Detail -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>📋 Detail Laporan</h2>
+                <button class="modal-close" onclick="closeModal()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body" id="modalContent">
+                <!-- Content will be populated here -->
+                <div class="resolve-section" id="resolveSection" style="display: none;">
+                    <label class="resolve-label" for="resolveTextarea">📝 Langkah Penyelesaian Guru BK:</label>
+                    <textarea class="resolve-textarea" id="resolveTextarea" placeholder="Jelaskan langkah-langkah yang sudah dilakukan untuk menyelesaikan kasus ini... (minimal 10 karakter)" required></textarea>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Penanganan -->
+    <div class="modal-overlay" id="penangananModal">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2>🛠️ Form Penanganan Kasus Bullying</h2>
+                <button class="modal-close" onclick="closePenangananModal()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-row">
+                    <span class="detail-label">Kasus:</span>
+                    <span class="detail-value kasus" id="penangananKasus">-</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Pelaku:</span>
+                    <span class="detail-value" id="penangananPelaku">-</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Korban:</span>
+                    <span class="detail-value" id="penangananKorban">-</span>
+                </div>
+                <label class="resolve-label" for="penangananTextarea">📝 Penanggulangan Kasus (max ~100 kalimat):</label>
+                <textarea class="resolve-textarea" id="penangananTextarea" rows="12" placeholder="Jelaskan secara detail langkah-langkah penanggulangan kasus bullying ini..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal secondary" onclick="closePenangananModal()">Batal</button>
+                <button class="btn-modal primary" onclick="simpanPenanganan()">Simpan Penanganan</button>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+
+    <script>
+        // JSONBin.io Configuration - SAMAKAN dengan laporan-bullying.html
+        const BIN_ID = '69a7b4a643b1c97be9b1686d';
+        const API_KEY = '$2a$10$ZgOdDp55A4Mo3GyQDF.a.OGEfqVKNERWKmU.JpGojEyTE1rlJC3mq';
+
+        // Ambil data dari JSONBin
+        async function fetchFromJSONBin() {
+            try {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Master-Key': API_KEY
+                    }
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    return result.record || [];
+                }
+                return [];
+            } catch (error) {
+                console.error('Error fetching from JSONBin:', error);
+                return [];
+            }
+        }
+
+        // Update status di JSONBin
+        async function updateStatusInJSONBin(updatedData) {
+            try {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': API_KEY
+                    },
+                    body: JSON.stringify(updatedData)
+                });
+                return response.ok;
+            } catch (error) {
+                console.error('Error updating JSONBin:', error);
+                return false;
+            }
+        }
+
+        let reports = [];
+        let currentReportId = null;
+
+        // Load reports from JSONBin
+        async function loadReports() {
+            reports = await fetchFromJSONBin();
+            // Sort by id descending (newest first)
+            reports.sort((a, b) => b.id - a.id);
+            renderTable();
+            updateStats();
+        }
+
+        // Update statistics
+        function updateStats() {
+            const total = reports.length;
+            const baru = reports.filter(r => !r.status || r.status === 'baru').length;
+            const dibaca = reports.filter(r => r.status === 'dibaca').length;
+            const selesai = reports.filter(r => r.status === 'selesai').length;
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('pendingCount').textContent = baru + dibaca;
+            document.getElementById('processedCount').textContent = selesai;
+            document.getElementById('totalBadge').textContent = `${total} Laporan`;
+        }
+
+        // Render table
+        function renderTable() {
+            const tbody = document.getElementById('reportsTableBody');
+            const emptyState = document.getElementById('emptyState');
+            const tableWrapper = document.querySelector('.table-wrapper');
+
+            if (reports.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                tableWrapper.style.display = 'none';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            tableWrapper.style.display = 'block';
+
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filteredReports = reports.filter(report => {
+                return (
+                    (report.kasus && report.kasus.toLowerCase().includes(searchTerm)) ||
+                    (report.namaPembullying && report.namaPembullying.toLowerCase().includes(searchTerm)) ||
+                    (report.namaKorban && report.namaKorban.toLowerCase().includes(searchTerm)) ||
+                    (report.kelas && report.kelas.toLowerCase().includes(searchTerm)) ||
+                    (report.tempat && report.tempat.toLowerCase().includes(searchTerm))
+                );
+            });
+
+            tbody.innerHTML = filteredReports.map((report, index) => {
+                let statusBadge = '';
+                if (!report.status || report.status === 'baru') {
+                    statusBadge = '<span class="status-badge baru">🆕 Baru</span>';
+                } else if (report.status === 'dibaca') {
+                    statusBadge = '<span class="status-badge dibaca">👁️ Dibaca</span>';
+                } else if (report.status === 'selesai') {
+                    const snippet = report.penyelesaian ? report.penyelesaian.substring(0, 50) + '...' : '';
+                    statusBadge = `<span class="status-badge selesai" title="${snippet}">✅ Selesai ${snippet ? '|' : ''}</span>`;
+                }
+
+                return `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td class="date-cell">${report.tanggal || '-'} ${report.waktu || ''}</td>
+                        <td class="kasus-cell" title="${report.kasus || ''}">${report.kasus || '-'}</td>
+                        <td class="nama-cell pelaku-cell">${report.namaPembullying || '-'}</td>
+                        <td class="nama-cell korban-cell">${report.namaKorban || '-'}</td>
+                        <td>${report.kelas || '-'}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button class="action-btn" data-id="${report.id}" title="Penanganan Kasus" onclick="showPenangananModal(${report.id})" style="font-size: 1.2rem;">
+                                🛠️
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Filter reports
+        function filterReports() {
+            renderTable();
+        }
+
+        // Show detail modal (updated with debug)
+        function showDetail(id) {
+            console.log('showDetail called with id:', id, 'type:', typeof id);
+            currentReportId = id;
+            const report = reports.find(r => r.id === id);
+            
+            if (!report) {
+                console.error('Report not found for id:', id);
+                alert('Laporan tidak ditemukan!');
+                return;
+            }
+            console.log('Found report:', report);
+
+            let penyelesaianHTML = '';
+            if (report.penyelesaian) {
+                penyelesaianHTML = `
+                <div class="detail-row">
+                    <span class="detail-label">✅ Penyelesaian</span>
+                    <div class="penyelesaian-preview">
+                        <h4>Langkah Guru BK:</h4>
+                        <div style="white-space: pre-wrap;">${report.penyelesaian}</div>
+                    </div>
+                </div>`;
+            }
+
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = `
+                <div class="detail-row">
+                    <span class="detail-label">📅 Tanggal Laporan</span>
+                    <span class="detail-value">${report.tanggal || '-'} ${report.waktu || ''}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">📝 Kasus Bullying</span>
+                    <span class="detail-value kasus">${report.kasus || '-'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">📍 Tempat Kejadian</span>
+                    <span class="detail-value">${report.tempat || '-'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">⏰ Jam Kejadian</span>
+                    <span class="detail-value">${report.jam || '-'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">👤 Nama Pelaku</span>
+                    <span class="detail-value" style="color: var(--error);">${report.namaPembullying || '-'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">😢 Nama Korban</span>
+                    <span class="detail-value" style="color: var(--info);">${report.namaKorban || '-'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">👨‍🏫 Walikelas</span>
+                    <span class="detail-value">${report.walikelas || '-'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">🏫 Kelas</span>
+                    <span class="detail-value">${report.kelas || '-'}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">📊 Status</span>
+                    <span class="detail-value">${!report.status || report.status === 'baru' ? '🆕 Baru' : report.status === 'dibaca' ? '👁️ Dibaca' : '✅ Selesai'}</span>
+                </div>
+                ${penyelesaianHTML}
+            `;
+
+            // Control resolve form visibility
+            const resolveSection = document.getElementById('resolveSection');
+            const resolveBtn = document.getElementById('resolveBtn');
+            const resolveTextarea = document.getElementById('resolveTextarea');
+            
+            if (resolveSection && resolveBtn && resolveTextarea) {
+                if (report.status !== 'selesai') {
+                    resolveSection.style.display = 'block';
+                    resolveBtn.style.display = 'inline-flex';
+                    resolveTextarea.value = '';
+                } else {
+                    resolveSection.style.display = 'none';
+                    resolveBtn.style.display = 'none';
+                }
+            }
+
+            document.getElementById('detailModal').classList.add('show');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('show');
+            currentReportId = null;
+        }
+
+        // Mark as read
+        async function markAsRead() {
+            if (!currentReportId) return;
+
+            // Update status locally
+            const reportIndex = reports.findIndex(r => r.id === currentReportId);
+            if (reportIndex !== -1) {
+                reports[reportIndex].status = 'dibaca';
+                
+                // Update to JSONBin
+                await updateStatusInJSONBin(reports);
+                await loadReports();
+            }
+            closeModal();
+        }
+
+        // Mark as resolved
+        async function markAsResolved() {
+            const resolveTextarea = document.getElementById('resolveTextarea');
+            const notes = resolveTextarea.value.trim();
+            
+            if (notes.length < 10) {
+                alert('Mohon jelaskan minimal 10 karakter langkah penyelesaian.');
+                resolveTextarea.focus();
+                return;
+            }
+
+            if (!currentReportId) return;
+
+            const reportIndex = reports.findIndex(r => r.id === currentReportId);
+            if (reportIndex !== -1) {
+                reports[reportIndex].status = 'selesai';
+                reports[reportIndex].penyelesaian = notes;
+                
+                // Update to JSONBin
+                const success = await updateStatusInJSONBin(reports);
+                if (success) {
+                    alert('✅ Laporan sudah ditangani dan status berubah menjadi selesai!');
+                    await loadReports();
+                } else {
+                    alert('❌ Gagal menyimpan. Coba lagi.');
+                }
+            }
+            closeModal();
+        }
+
+
+
+        let currentPenangananId = null;
+
+        // Show penanganan modal
+        function showPenangananModal(id) {
+            currentPenangananId = id;
+            const report = reports.find(r => r.id === id);
+            if (!report) {
+                alert('Laporan tidak ditemukan!');
+                return;
+            }
+            document.getElementById('penangananKasus').textContent = report.kasus || '-';
+            document.getElementById('penangananPelaku').textContent = report.namaPembullying || '-';
+            document.getElementById('penangananKorban').textContent = report.namaKorban || '-';
+            document.getElementById('penangananTextarea').value = report.penyelesaian || '';
+            document.getElementById('penangananModal').classList.add('show');
+            document.getElementById('penangananTextarea').focus();
+        }
+
+        // Close penanganan modal
+        function closePenangananModal() {
+            document.getElementById('penangananModal').classList.remove('show');
+            currentPenangananId = null;
+        }
+
+        // Save penanganan
+        async function simpanPenanganan() {
+            const textarea = document.getElementById('penangananTextarea');
+            const notes = textarea.value.trim();
+            if (notes.length < 20) {
+                alert('Mohon jelaskan minimal 20 karakter penanggulangan.');
+                textarea.focus();
+                return;
+            }
+
+            const reportIndex = reports.findIndex(r => r.id === currentPenangananId);
+            if (reportIndex !== -1) {
+                reports[reportIndex].penyelesaian = notes;
+                reports[reportIndex].status = 'selesai';
+                
+                const success = await updateStatusInJSONBin(reports);
+                if (success) {
+                    alert('✅ Penanganan berhasil disimpan! Status berubah menjadi Selesai.');
+                    closePenangananModal();
+                    await loadReports(); // Refresh table
+                } else {
+                    alert('❌ Gagal menyimpan. Coba lagi.');
+                }
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('detailModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Initial load
+        loadReports();
+    </script>
+</body>
+</html>
+
